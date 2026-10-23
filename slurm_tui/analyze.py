@@ -1,4 +1,5 @@
 from .models import Finding, JobRecord
+from .formatting import fmt_mb, fmt_time
 
 # Tunable thresholds
 NEAR_MEM_LIMIT = 0.85            # memory use at or above this = "near the limit"
@@ -22,38 +23,18 @@ EXIT_HINTS = {
     143: "terminated (SIGTERM)",
 }
 
-
-def _fmt_time(seconds: float) -> str:
-    s = int(round(seconds))
-    h, rem = divmod(s, 3600)
-    m, s = divmod(rem, 60)
-    if h:
-        return f"{h}h{m:02d}m"
-    if m:
-        return f"{m}m{s:02d}s"
-    return f"{s}s"
-
-# Format like Slurm's --mem syntax (G / M)
-def _fmt_mb(mb: float) -> str:
-    if mb >= 1024:
-        return f"{mb / 1024:.1f}G"
-    if mb >= 10:
-        return f"{mb:.0f}M"
-    return f"{mb:.1f}M"
-
-
 def _outcome(job: JobRecord) -> list[Finding]:
     state = job.state
     if state in ACTIVE_STATES:
         return [Finding("info", f"Job is still {state.lower()}.")]
     if state == "COMPLETED":
-        return [Finding("info", f"Completed successfully in {_fmt_time(job.elapsed_s)}.")]
+        return [Finding("info", f"Completed successfully in {fmt_time(job.elapsed_s)}.")]
     if state == "TIMEOUT":
-        limit = _fmt_time(job.timelimit_s) if job.timelimit_s else "its limit"
+        limit = fmt_time(job.timelimit_s) if job.timelimit_s else "its limit"
         return [Finding("error", f"Hit its time limit ({limit}). Raise --time, "
                                  "or check whether the job was making progress.")]
     if state == "OUT_OF_MEMORY":
-        req = _fmt_mb(job.req_mem_mb) if job.req_mem_mb else "the requested amount"
+        req = fmt_mb(job.req_mem_mb) if job.req_mem_mb else "the requested amount"
         return [Finding("error", f"Killed for using too much memory (requested {req}). "
                                  "Raise --mem.")]
     if state == "FAILED":
@@ -74,14 +55,14 @@ def _memory(job: JobRecord) -> list[Finding]:
         return []
     if job.elapsed_s < MEASURE_MIN_S:
         if job.state == "COMPLETED":
-            return [Finding("info", f"Ran only {_fmt_time(job.elapsed_s)}: too short to "
+            return [Finding("info", f"Ran only {fmt_time(job.elapsed_s)}: too short to "
                                     "measure memory. Slurm samples ~30s.")]
         return []
     if job.max_rss_mb is None:
         return [Finding("info", "No memory measurement was recorded for this job.")]
 
     ratio = job.max_rss_mb / job.req_mem_mb
-    used = f"{_fmt_mb(job.max_rss_mb)} of {_fmt_mb(job.req_mem_mb)}"
+    used = f"{fmt_mb(job.max_rss_mb)} of {fmt_mb(job.req_mem_mb)}"
     if ratio >= NEAR_MEM_LIMIT:
         return [Finding("warn", f"Memory peaked at {used} ({ratio:.0%}). Raise --mem: a job "
                                 "over its limit slows down (swaps) before it is killed.")]
@@ -94,7 +75,7 @@ def _time(job: JobRecord) -> list[Finding]:
     if job.state == "TIMEOUT" or not job.timelimit_s:
         return []
     ratio = job.elapsed_s / job.timelimit_s
-    used = f"{_fmt_time(job.elapsed_s)} of {_fmt_time(job.timelimit_s)}"
+    used = f"{fmt_time(job.elapsed_s)} of {fmt_time(job.timelimit_s)}"
     if ratio >= NEAR_TIME_LIMIT:
         return [Finding("warn", f"Used {used} ({ratio:.0%}). Raise --time before a longer "
                                 "run hits the limit.")]
