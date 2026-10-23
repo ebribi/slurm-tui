@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "slurm-tui"
+version = "0.0.1"
+requires-python = ">=3.11"
+dependencies = []
+
+[poroject.scripts]
+slurm-tui = "slurm_tui.cli:main"

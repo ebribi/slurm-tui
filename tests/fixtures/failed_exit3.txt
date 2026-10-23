@@ -1,0 +1,3 @@
+JobID|JobName|State|ExitCode|Elapsed|Timelimit|ReqMem|AllocCPUS|TotalCPU|MaxRSS|NodeList
+689|wrap|FAILED|3:0|00:00:01|00:05:00|4G|1|00:00.001||compute02
+689.batch|batch|FAILED|3:0|00:00:01|||1|00:00.001|444K|compute02
