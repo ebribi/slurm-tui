@@ -14,3 +14,8 @@ class JobRecord:
     total_cpu_s: float | None
     max_rss_mb: int | None      # None if nothing was measured
     node: str
+
+@dataclass(frozen=True)
+class Finding:
+    level: str                  # "error", "warn", or "info"
+    message: str
