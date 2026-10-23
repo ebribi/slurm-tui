@@ -20,10 +20,13 @@ def _run_sacct(job_id: str) -> str:
             raise ValueError(f"no fixture named {path.name} in {fixture_dir}")
         return path.read_text()
 
-    result = subprocess.run(
-        ["sacct", "-j", job_id, "--parseable2", f"--format={SACCT_FORMAT}"],
-        capture_output=True, text=True, check=True,
-    )
+    try:
+        result = subprocess.run(
+            ["sacct", "-j", job_id, "--parsable2", f"--format={SACCT_FORMAT}"],
+            capture_output=True, text=True, check=True,
+        )
+    except subprocess.CalledProcessError as e:
+        raise ValueError(f"sacct failed: {e.stderr.strip() or f'exit {e.returncode}'}") from e
     return result.stdout
 
 def get_job(job_id: str | None) -> JobRecord:

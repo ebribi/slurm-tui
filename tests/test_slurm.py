@@ -27,3 +27,16 @@ def test_latest_job_id(monkeypatch):
         lambda *a, **k: subprocess.CompletedProcess(a, 0, stdout=out, stderr=""),
     )
     assert slurm.latest_job_id() == "102"
+
+def test_sacct_command_line(monkeypatch):
+    seen = {}
+
+    def fake_run(args, **kwargs):
+        seen["args"] = args
+        return subprocess.CompletedProcess(args, 0, stdout="", stderr="")
+
+    monkeypatch.delenv("SLURM_TUI_FIXTURES", raising=False)
+    monkeypatch.setattr(slurm.subprocess, "run", fake_run)
+    slurm._run_sacct("702")
+    assert seen["args"][:3] == ["sacct", "-j", "702"]
+    assert "--parsable2" in seen["args"]
