@@ -3,7 +3,7 @@ import argparse
 from . import slurm, analyze, ui
 
 def main(argv=None) -> None:
-    parser = argparse.ArgumentParser(prog="slurm-tui")
+    parser = argparse.ArgumentParser(prog="slc")
     sub = parser.add_subparsers(dest="command", required=True)
     last = sub.add_parser("job", aliases=["last"], help="post-mortem of a job (default: your latest)")
     last.add_argument("job_id", nargs="?")
@@ -14,8 +14,8 @@ def main(argv=None) -> None:
         except FileNotFoundError:
             sys.exit(
                 "sacct not found. Are you on the cluster? On a laptop, set "
-                "SLURM_TUI_FIXTURES=tests/fixtures and use a fixture name, "
-                "ex. `slurm-tui last completed`."
+                "SLURM_CLI_FIXTURES=tests/fixtures and use a fixture name, "
+                "ex. `slc last completed`."
             )
         except ValueError as e:
             sys.exit(f"error: {e}")

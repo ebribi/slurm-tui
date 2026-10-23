@@ -1,4 +1,4 @@
-# slurm-tui
+# slurm-cli
 
 A small command-line tool that explains how a Slurm job ended: its state, how much time and memory it used compared with what you asked for, and plain-English advice for the next run. Built to help students learn the Brooklyn College CIS cluster.
 
@@ -32,14 +32,14 @@ On the cluster, with your virtual environment active:
 
 ```
 source ~/.venv/bin/activate
-pip install git+https://github.com/ebribi/slurm-tui
+pip install git+https://github.com/ebribi/slurm-cli
 ```
 
 Or from a clone:
 
 ```
-git clone https://github.com/ebribi/slurm-tui.git ~/slurm-tui
-cd ~/slurm-tui
+git clone https://github.com/ebribi/slurm-cli.git ~/slurm-cli
+cd ~/slurm-cli
 pip install -e .
 ```
 
@@ -48,10 +48,10 @@ With `-e`, a later `git pull` takes effect without reinstalling. After changing 
 ## Usage
 
 ```
-slurm-tui job            # your most recent job (last 14 days)
-slurm-tui job 702        # a specific job
-slurm-tui last           # "last" is an alias for "job"
-python -m slurm_tui job  # same thing without the command
+slc job            # your most recent job (last 14 days)
+slc job 702        # a specific job
+slc last           # "last" is an alias for "job"
+python -m slurm_cli job  # same thing without the command
 ```
 
 ## Reading the output
@@ -76,7 +76,7 @@ Findings are marked `✖` error, `▲` warning, `•` info. The advice rules:
 | Several CPUs requested but under 25% used | The job may be waiting on network or disk, or be single-threaded |
 | Under 30 seconds | Too short to measure memory reliably |
 
-The thresholds are constants at the top of `slurm_tui/analyze.py`.
+The thresholds are constants at the top of `slurm_cli/analyze.py`.
 
 ### Good to know (BC CIS cluster)
 
@@ -91,16 +91,16 @@ pip install -e . pytest
 python -m pytest
 ```
 
-Only `slurm_tui/slurm.py` talks to Slurm. To work without a cluster, set `SLURM_TUI_FIXTURES` to a folder of saved `sacct` output and give a fixture name instead of a job ID:
+Only `slurm_cli/slurm.py` talks to Slurm. To work without a cluster, set `SLURM_CLI_FIXTURES` to a folder of saved `sacct` output and give a fixture name instead of a job ID:
 
 ```
-SLURM_TUI_FIXTURES=tests/fixtures slurm-tui job timeout
+SLURM_CLI_FIXTURES=tests/fixtures slc job timeout
 ```
 
 ### Layout
 
 ```
-slurm_tui/
+slurm_cli/
   cli.py        argument parsing and dispatch
   slurm.py      the only place that runs sacct (or reads a fixture)
   parsing.py    sacct text -> JobRecord (pure functions)

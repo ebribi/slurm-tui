@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from slurm_tui.parsing import parse_sacct
+from slurm_cli.parsing import parse_sacct
 
 FIX = Path(__file__).parent / "fixtures"
 

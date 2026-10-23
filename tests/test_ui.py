@@ -3,9 +3,9 @@ from pathlib import Path
 
 from rich.console import Console
 
-from slurm_tui import ui
-from slurm_tui.analyze import analyze
-from slurm_tui.parsing import parse_sacct
+from slurm_cli import ui
+from slurm_cli.analyze import analyze
+from slurm_cli.parsing import parse_sacct
 
 FIX = Path(__file__).parent / "fixtures"
 

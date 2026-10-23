@@ -1,5 +1,5 @@
 import pytest
-from slurm_tui.parsing import parse_duration, parse_mem_mb
+from slurm_cli.parsing import parse_duration, parse_mem_mb
 
 def test_duration():
     assert parse_duration("00:01:29") == 89

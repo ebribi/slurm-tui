@@ -1,9 +1,9 @@
 from dataclasses import replace
 from pathlib import Path
 
-from slurm_tui.analyze import analyze
-from slurm_tui.models import JobRecord
-from slurm_tui.parsing import parse_sacct
+from slurm_cli.analyze import analyze
+from slurm_cli.models import JobRecord
+from slurm_cli.parsing import parse_sacct
 
 FIX = Path(__file__).parent / "fixtures"
 

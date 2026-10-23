@@ -9,7 +9,7 @@ SACCT_FORMAT = (
     "JobID,JobName,State,ExitCode,Elapsed,Timelimit,"
     "ReqMem,AllocCPUS,TotalCPU,MaxRSS,NodeList"
 )
-FIXTURE_ENV = "SLURM_TUI_FIXTURES"
+FIXTURE_ENV = "SLURM_CLI_FIXTURES"
 
 # Only function that communicates with Slurm (or fixture dir)
 def _run_sacct(job_id: str) -> str:
